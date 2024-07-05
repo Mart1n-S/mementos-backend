@@ -20,6 +20,11 @@ services:
       PMA_HOST: database
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: root
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   database_mementosV2:
