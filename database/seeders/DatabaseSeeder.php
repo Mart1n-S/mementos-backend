@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Categorie;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +14,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Créer un utilisateur spécifique
+        User::create([
+            'pseudo' => 'Martin',
+            'email' => 'martin@gmail.com',
+            'password' => bcrypt('M@rt1n13'),
+            'niveauRevision' => 7,
+            'email_verified_at' => now()
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Créer 10 utilisateurs avec des emails vérifiés
+        User::factory(10)->create();
+
+        // Créer 5 utilisateurs avec des emails non vérifiés
+        User::factory(5)->unverified()->create();
+
+        // Créer des catégories prédéfinies
+        Categorie::factory()->predefined();
+
+        // Attendre que les catégories soient créées et ensuite créer des thèmes pour chaque catégorie, puis créer des cartes pour chaque thème
+        // puis créer une révision pour un user
+        $this->call([
+            ThemeSeeder::class,
+            CarteSeeder::class,
+            RevisionSeeder::class,
+        ]);
     }
 }

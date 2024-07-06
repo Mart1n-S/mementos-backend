@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('cartes', function (Blueprint $table) {
             $table->id();
-            $table->string('pseudo');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->integer('niveauRevision')->nullable();
-            $table->rememberToken();
+            $table->string('question');
+            $table->text('reponse');
+            $table->unsignedBigInteger('theme_id');
             $table->timestamps();
             $table->softDeletes();
+
+            // Contrainte de clé étrangère qui référence la table `themes`
+            $table->foreign('theme_id')->references('id')->on('themes')->onDelete('cascade');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('cartes');
     }
 };

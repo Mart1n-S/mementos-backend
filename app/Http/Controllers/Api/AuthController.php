@@ -25,7 +25,8 @@ class AuthController extends Controller
     {
         try {
             $request->validate([
-                'name' => ['required', 'string', 'max:255'],
+                'pseudo' => ['required', 'string', 'max:20', 'min:2'],
+                'niveauRevision' => ['required', 'integer', 'min:1', 'max:7'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
                 'password' => [
                     'required',
@@ -38,8 +39,9 @@ class AuthController extends Controller
                 ],
             ]);
             $user = User::create([
-                'name' => $request->name,
+                'pseudo' => $request->pseudo,
                 'email' => $request->email,
+                'niveauRevision' => $request->niveauRevision,
                 'password' => Hash::make($request->input('password')),
             ]);
 
@@ -48,7 +50,7 @@ class AuthController extends Controller
             // Connecter l'utilisateur
             Auth::login($user);
 
-            // Créer un jeton d'API pour l'utilisateur (nécessite Laravel Sanctum ou Passport)
+            // Créer un jeton d'API pour l'utilisateur 
             $token = $user->createToken('access_token')->plainTextToken;
 
             return response()->json([
@@ -104,7 +106,7 @@ class AuthController extends Controller
             if (!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Email & Password does not match with our record.',
+                    'message' => 'Email ou mot de passe incorrect',
                 ], 401);
             }
 
@@ -112,8 +114,8 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'message' => 'Utilisateur connecté avec succès',
+                'token' => $user->createToken("access_token")->plainTextToken
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
