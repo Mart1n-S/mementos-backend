@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\CategorieController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,3 +30,5 @@ Route::post('/forgot-password', [AuthController::class, 'forgot']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->put('/user/{id}', [UserController::class, 'update']);
+
+Route::get('/categories', [CategorieController::class, 'index']);
