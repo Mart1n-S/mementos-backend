@@ -37,6 +37,29 @@ class ThemeSeeder extends Seeder
             'Mode' => ['Histoire de la mode', 'Tendances mode 2024']
         ];
 
+        $categoriesColors = [
+            'Histoire' => '#A88DFF',
+            'Programmation' => '#EFD81D',
+            'Anglais' => '#6ED3EA',
+            'Pays' => '#50db4d',
+            'Autres' => '#636363',
+            'Science' => '#FFD700',
+            'Mathématiques' => '#FF4500',
+            'Art' => '#6A5ACD',
+            'Musique' => '#00BFFF',
+            'Cinéma' => '#FF6347',
+            'Technologie' => '#0A75AD',
+            'Santé' => '#E34234',
+            'Sport' => '#228B22',
+            'Nature' => '#6B8E23',
+            'Gastronomie' => '#D2691E',
+            'Finance' => '#FFDF00',
+            'Politique' => '#B22222',
+            'Voyage' => '#2F4F4F',
+            'Education' => '#4682B4',
+            'Mode' => '#FF69B4'
+        ];
+
         // Crée 2 thèmes pour chaque catégorie
         foreach ($themesByCategory as $categoryName => $themes) {
             $category = Categorie::where('nom', $categoryName)->first();
@@ -44,7 +67,8 @@ class ThemeSeeder extends Seeder
                 Theme::factory()->create([
                     'nom' => $themeName,
                     'category_id' => $category->id,
-                    'user_id' => rand(1, 10)
+                    'user_id' => rand(1, 10),
+                    'couleur' => $categoriesColors[$categoryName]
                 ]);
             }
         }

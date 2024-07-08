@@ -26,6 +26,7 @@ class Theme extends Model
         'user_id',
         'category_id',
         'nom',
+        'couleur',
         'public'
     ];
 
@@ -51,9 +52,9 @@ class Theme extends Model
      * Get the category that this theme belongs to.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function category()
+    public function categorie()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Categorie::class, 'category_id');
     }
 
     /**
