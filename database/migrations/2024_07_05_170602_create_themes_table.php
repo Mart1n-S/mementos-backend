@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id');
             $table->string('nom');
+            $table->string('couleur');
             $table->boolean('public')->default(false);
             $table->timestamps();
             $table->softDeletes();
