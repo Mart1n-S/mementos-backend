@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\CategorieController;
@@ -35,3 +36,5 @@ Route::middleware('auth:sanctum')->put('/user/{id}', [UserController::class, 'up
 Route::get('/categories', [CategorieController::class, 'index']);
 
 Route::get('/themes/{categorie}', [ThemeController::class, 'getThemesByCategorie']);
+
+Route::get('/themes/{theme}/cards', [CardController::class, 'getCardsByTheme']);
