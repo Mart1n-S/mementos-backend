@@ -77,6 +77,11 @@ Route::get('/user/{userId}/themes', [ThemeController::class, 'getThemesByUser'])
 Route::get('/themes/infos/{themeId}', [ThemeController::class, 'getThemeById'])->middleware('auth:sanctum');
 
 /**
+ * Route pour modifier un thème de l'utilisateur connecté
+ */
+Route::put('/themes/{themeId}', [ThemeController::class, 'updateTheme'])->middleware('auth:sanctum');
+
+/**
  * Route pour récupérer les cartes d'un thème public
  */
 Route::get('/themes/{theme}/cards', [CardController::class, 'getCardsByTheme']);
