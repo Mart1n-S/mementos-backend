@@ -10,6 +10,13 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+    /**
+     * Mettre à jour un utilisateur
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id)
     {
         /** @var User $user */
