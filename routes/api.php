@@ -96,3 +96,8 @@ Route::delete('/cartes/{carteId}', [CardController::class, 'deleteCard'])->middl
  * Route pour mettre à jour une carte d'un utilisateur connecté
  */
 Route::put('/cartes/{id}', [CardController::class, 'updateCard'])->middleware('auth:sanctum');
+
+/**
+ * Route pour créer une carte pour un utilisateur connecté
+ */
+Route::post('/cartes', [CardController::class, 'createCard'])->middleware('auth:sanctum');

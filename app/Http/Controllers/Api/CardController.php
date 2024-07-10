@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Carte;
 use App\Models\Theme;
+use App\Models\Revision;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 
 class CardController extends Controller
 {
@@ -51,6 +52,65 @@ class CardController extends Controller
         } catch (\Exception $e) {
             // Gestion des erreurs
             return response()->json(['error' => 'Erreur lors de la récupération des cartes'], 500);
+        }
+    }
+
+    /**
+     * Crée une nouvelle carte et l'ajoute aux révisions des utilisateurs révisant une carte existante du thème
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createCard(Request $request)
+    {
+        $user = Auth::user();
+
+        // Vérifier la validité des données
+        $validator = Validator::make($request->all(), [
+            'question' => 'required|string|min:1|max:255',
+            'reponse' => 'required|string|min:1|max:255',
+            'theme_id' => 'required|exists:themes,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            // Vérifiez si l'utilisateur est propriétaire du thème
+            $theme = Theme::where('id', $request->theme_id)->where('user_id', $user->id)->first();
+            if (!$theme) {
+                return response()->json(['error' => 'Accès non autorisé'], 403);
+            }
+
+            // Récupérer une carte existante du thème
+            $existingCardId = Carte::where('theme_id', $request->theme_id)->value('id');
+
+            // Créer la carte
+            $carte = new Carte();
+            $carte->question = $request->question;
+            $carte->reponse = $request->reponse;
+            $carte->theme_id = $request->theme_id;
+            $carte->save();
+
+            if ($existingCardId) {
+                // Récupérer les utilisateurs révisant cette carte
+                $userIds = Revision::where('carte_id', $existingCardId)->pluck('user_id')->unique();
+
+                // Ajouter la nouvelle carte aux révisions des utilisateurs
+                foreach ($userIds as $userId) {
+                    Revision::create([
+                        'user_id' => $userId,
+                        'carte_id' => $carte->id,
+                        'niveau' => 1,
+                        'dateRevision' => now(),
+                    ]);
+                }
+            }
+
+            return response()->json($carte, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la création de la carte'], 500);
         }
     }
 
