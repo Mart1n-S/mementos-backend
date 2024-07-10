@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class CardController extends Controller
 {
     /**
-     * Retourne toutes les cartes d'un thème spécifique avec les informations sur le thème et l'utilisateur
+     * Retourne toutes les cartes d'un thème public spécifique avec les informations sur le thème et l'utilisateur
      *
      * @param $themeId
      * @return \Illuminate\Http\JsonResponse
@@ -42,7 +42,7 @@ class CardController extends Controller
             }
 
             // Récupérer les cartes associées au thème
-            $cartes = $theme->cartes; // Assurez-vous d'avoir défini la relation dans votre modèle Theme
+            $cartes = $theme->cartes;
 
             // Retourner les cartes
             return response()->json($cartes, 200);
@@ -74,7 +74,6 @@ class CardController extends Controller
             // Supprimer la carte
             $carte->delete();
 
-            // Retourner une réponse réussie
             return response()->json(['message' => 'Carte supprimée avec succès'], 200);
         } catch (\Exception $e) {
             // Gestion des erreurs

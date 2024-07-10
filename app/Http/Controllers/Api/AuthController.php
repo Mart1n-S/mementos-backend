@@ -17,7 +17,7 @@ use Carbon\Carbon;
 class AuthController extends Controller
 {
     /**
-     * Create User
+     * Créer un utilisateur
      * @param Request $request
      * @return User 
      */
@@ -59,19 +59,19 @@ class AuthController extends Controller
                 'token' => $token
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation errors
+            // Retourner les erreurs de validation
             return response()->json([
                 'status' => false,
                 'errors' => $e->errors()
-            ], 422); // Unprocessable Entity for validation errors
+            ], 422); // Impossible de traiter l'entité
         } catch (\Illuminate\Database\QueryException $e) {
-            // Handle database errors like unique constraint
+            // Retourner une erreur si l'email est déjà utilisé
             return response()->json([
                 'status' => false,
                 'message' => 'Cet email déjà utilisé'
-            ], 409); // Conflict for email already used
+            ], 409);
         } catch (\Throwable $th) {
-            // General error handling
+            // Retourner une erreur si une erreur interne du serveur s'est produite
             return response()->json([
                 'status' => false,
                 'message' => 'Une erreur interne au serveur s\'est produite'
@@ -80,7 +80,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Login The User
+     * Connecter un utilisateur
      * @param Request $request
      * @return User
      */
@@ -98,7 +98,7 @@ class AuthController extends Controller
             if ($validateUser->fails()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'validation error',
+                    'message' => 'Erreur de validation',
                     'errors' => $validateUser->errors()
                 ], 401);
             }

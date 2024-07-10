@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class ThemeController extends Controller
 {
     /**
-     * Retourne tous les thèmes public par catégorie
+     * Retourne tous les thèmes publiques d'une catégorie
      *
      * @param $categorie
      * @return \Illuminate\Http\JsonResponse
