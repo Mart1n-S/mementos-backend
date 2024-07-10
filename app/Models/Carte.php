@@ -47,4 +47,19 @@ class Carte extends Model
     {
         return $this->hasMany(Revision::class);
     }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($carte) {
+            // Supprimer physiquement les révisions associées
+            $carte->revisions()->forceDelete();
+        });
+    }
 }

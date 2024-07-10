@@ -38,3 +38,11 @@ Route::get('/categories', [CategorieController::class, 'index']);
 Route::get('/themes/{categorie}', [ThemeController::class, 'getThemesByCategorie']);
 
 Route::get('/themes/{theme}/cards', [CardController::class, 'getCardsByTheme']);
+
+Route::get('/user/{userId}/themes', [ThemeController::class, 'getThemesByUser'])->middleware('auth:sanctum');
+
+Route::get('/cartes/{themeId}', [CardController::class, 'getCardsByThemeForUser'])->middleware('auth:sanctum');
+
+Route::get('/themes/infos/{themeId}', [ThemeController::class, 'getThemeById'])->middleware('auth:sanctum');
+
+Route::delete('/cartes/{carteId}', [CardController::class, 'deleteCard'])->middleware('auth:sanctum');
