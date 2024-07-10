@@ -141,4 +141,40 @@ class ThemeController extends Controller
             return response()->json(['error' => 'Erreur lors de la mise à jour du thème'], 500);
         }
     }
+
+    /**
+     * Supprime un thème pour un utilisateur connecté
+     *
+     * @param $themeId
+     * @return void
+     */
+    public function deleteTheme($themeId)
+    {
+        $user = Auth::user();
+
+        try {
+            // Vérifiez si le thème existe et appartient à l'utilisateur
+            $theme = Theme::where('id', $themeId)->where('user_id', $user->id)->first();
+
+            if (!$theme) {
+                return response()->json(['error' => 'Accès non autorisé ou thème non trouvé'], 403);
+            }
+
+            // Récupérer toutes les cartes du thème
+            $carteIds = Carte::where('theme_id', $themeId)->pluck('id');
+
+            // Supprimer physiquement toutes les révisions associées à ces cartes
+            Revision::whereIn('carte_id', $carteIds)->delete();
+
+            // Supprimer logiquement les cartes du thème (soft delete)
+            Carte::where('theme_id', $themeId)->delete();
+
+            // Supprimer le thème
+            $theme->delete();
+
+            return response()->json(['message' => 'Thème supprimé avec succès'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression du thème'], 500);
+        }
+    }
 }
