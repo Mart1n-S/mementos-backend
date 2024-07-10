@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Carte;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class CardController extends Controller
 {
@@ -78,6 +80,51 @@ class CardController extends Controller
         } catch (\Exception $e) {
             // Gestion des erreurs
             return response()->json(['error' => 'Erreur lors de la suppression de la carte ou accès non autorisé'], 403);
+        }
+    }
+
+    /**
+     * Met à jour une carte
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateCard(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        // Vérifier la validité des données
+        $validator = Validator::make($request->all(), [
+            'question' => 'required|string|min:1|max:255',
+            'reponse' => 'required|string|min:1|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['messages' => $validator->errors()], 422);
+        }
+
+        try {
+            // Vérifiez si la carte existe
+            $carte = Carte::find($id);
+            if (!$carte) {
+                return response()->json(['error' => 'Carte non trouvée'], 404);
+            }
+
+            // Vérifiez si l'utilisateur est propriétaire du thème auquel appartient la carte
+            $theme = Theme::where('id', $carte->theme_id)->where('user_id', $user->id)->first();
+            if (!$theme) {
+                return response()->json(['error' => 'Accès non autorisé'], 403);
+            }
+
+            // Mis à jour de la carte
+            $carte->question = $request->input('question');
+            $carte->reponse = $request->input('reponse');
+            $carte->save();
+
+            return response()->json($carte, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la mise à jour de la carte ou accès non autorisé'], 403);
         }
     }
 }

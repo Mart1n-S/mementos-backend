@@ -91,3 +91,8 @@ Route::get('/cartes/{themeId}', [CardController::class, 'getCardsByThemeForUser'
 
  */
 Route::delete('/cartes/{carteId}', [CardController::class, 'deleteCard'])->middleware('auth:sanctum');
+
+/**
+ * Route pour mettre à jour une carte d'un utilisateur connecté
+ */
+Route::put('/cartes/{id}', [CardController::class, 'updateCard'])->middleware('auth:sanctum');
