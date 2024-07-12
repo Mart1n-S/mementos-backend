@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ThemeController extends Controller
 {
@@ -232,6 +233,44 @@ class ThemeController extends Controller
             return response()->json(['message' => 'Thème supprimé avec succès'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur lors de la suppression du thème'], 500);
+        }
+    }
+
+    /**
+     * Duplique un thème public
+     *
+     * @param $themeId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function duplicateTheme($themeId)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = Auth::user();
+            $originalTheme = Theme::findOrFail($themeId);
+
+            // Créer le nouveau thème
+            $newTheme = $originalTheme->replicate();
+            $newTheme->user_id = $user->id;
+            $newTheme->nom = $originalTheme->nom;
+            $newTheme->public = false;
+            $newTheme->save();
+
+            // Dupliquer les cartes associées
+            $originalCards = Carte::where('theme_id', $themeId)->get();
+            foreach ($originalCards as $originalCard) {
+                $newCard = $originalCard->replicate();
+                $newCard->theme_id = $newTheme->id;
+                $newCard->save();
+            }
+
+            DB::commit();
+
+            return response()->json($newTheme, 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Erreur lors de la duplication du thème: ' . $e->getMessage()], 500);
         }
     }
 }

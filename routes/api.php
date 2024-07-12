@@ -92,6 +92,11 @@ Route::put('/themes/{themeId}', [ThemeController::class, 'updateTheme'])->middle
 Route::delete('/themes/{themeId}', [ThemeController::class, 'deleteTheme'])->middleware('auth:sanctum');
 
 /**
+ * Route pour dupliquer un thème public
+ */
+Route::post('/duplicate/{themeId}/themes', [ThemeController::class, 'duplicateTheme'])->middleware('auth:sanctum');
+
+/**
  * Route pour récupérer les cartes d'un thème public
  */
 Route::get('/themes/{theme}/cards', [CardController::class, 'getCardsByTheme']);
