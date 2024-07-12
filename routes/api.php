@@ -62,6 +62,11 @@ Route::middleware('auth:sanctum')->put('/user/{id}', [UserController::class, 'up
 Route::get('/categories', [CategorieController::class, 'index']);
 
 /**
+ * Route pour créer un thème pour un utilisateur connecté
+ */
+Route::post('/themes', [ThemeController::class, 'createTheme'])->middleware('auth:sanctum');
+
+/**
  * Route pour récupérer les thèmes pour une catégorie donnée
  */
 Route::get('/themes/{categorie}', [ThemeController::class, 'getThemesByCategorie']);
