@@ -250,6 +250,11 @@ class ThemeController extends Controller
             $user = Auth::user();
             $originalTheme = Theme::findOrFail($themeId);
 
+            // Vérifier que le thème n'appartient pas déjà à l'utilisateur connecté
+            if ($originalTheme->user_id === $user->id) {
+                return response()->json(['error' => 'Vous ne pouvez pas dupliquer votre propre thème'], 403);
+            }
+
             // Créer le nouveau thème
             $newTheme = $originalTheme->replicate();
             $newTheme->user_id = $user->id;
