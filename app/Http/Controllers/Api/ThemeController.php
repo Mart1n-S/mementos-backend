@@ -82,6 +82,63 @@ class ThemeController extends Controller
         }
     }
 
+
+    /**
+     * Crée un nouveau thème pour l'utilisateur connecté
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createTheme(Request $request)
+    {
+        $user = Auth::user();
+
+        // Validation des données de la requête
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|min:3|max:35',
+            'category_id' => 'required|exists:categories,id',
+            'public' => 'required|boolean',
+            'cards' => 'required|array',
+            'cards.*.question' => 'required|string|min:1|max:255',
+            'cards.*.reponse' => 'required|string|min:1|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            // Récupérer la catégorie
+            $category = Categorie::find($request->input('category_id'));
+            if (!$category) {
+                return response()->json(['error' => 'Catégorie non trouvée'], 404);
+            }
+
+            // Créer le nouveau thème
+            $theme = new Theme();
+            $theme->nom = $request->input('nom');
+            $theme->category_id = $request->input('category_id');
+            $theme->public = $request->input('public');
+            $theme->couleur = $category->couleur;
+            $theme->user_id = $user->id;
+            $theme->save();
+
+            // Créer les cartes associées
+            $cards = $request->input('cards');
+            foreach ($cards as $card) {
+                $newCard = new Carte();
+                $newCard->question = $card['question'];
+                $newCard->reponse = $card['reponse'];
+                $newCard->theme_id = $theme->id;
+                $newCard->save();
+            }
+
+            return response()->json($theme, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la création du thème'], 500);
+        }
+    }
+
     /**
      * Met à jour un thème pour un utilisateur connecté
      *
