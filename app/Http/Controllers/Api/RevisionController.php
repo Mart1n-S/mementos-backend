@@ -20,12 +20,12 @@ class RevisionController extends Controller
         try {
             $user = Auth::user();
 
-            // Ensure the authenticated user matches the userId in the request
+            // S'assurer que l'utilisateur connecté correspond à l'utilisateur demandé
             if ($user->id !== (int)$userId) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
-            // Get unique themes associated with the user's revisions
+            // Récupérer les thèmes révisés par l'utilisateur
             $themes = Theme::whereHas('cartes.revisions', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->distinct()->get();
