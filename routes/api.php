@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ThemeController;
+use App\Http\Controllers\Api\RevisionController;
 use App\Http\Controllers\Api\CategorieController;
 /*
 |--------------------------------------------------------------------------
@@ -121,3 +122,18 @@ Route::put('/cartes/{id}', [CardController::class, 'updateCard'])->middleware('a
  * Route pour créer une carte pour un utilisateur connecté
  */
 Route::post('/cartes', [CardController::class, 'createCard'])->middleware('auth:sanctum');
+
+/**
+ * Route pour récupérer les révisions d'un utilisateur connecté
+ */
+Route::get('/revision/{userId}', [RevisionController::class, 'fetchUserRevision'])->middleware('auth:sanctum');
+
+/**
+ * Route pour supprimer un thème de la révision de l'utilisateur connecté
+ */
+Route::delete('/revision/{themeId}', [RevisionController::class, 'deleteThemeFromRevision'])->middleware('auth:sanctum');
+
+/**
+ * Route pour supprimer toutes les cartes de la révision de l'utilisateur connecté
+ */
+Route::delete('/deleteAll/revision', [RevisionController::class, 'deleteAllRevision'])->middleware('auth:sanctum');
