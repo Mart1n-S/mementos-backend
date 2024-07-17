@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\Theme;
 use App\Models\Revision;
 use App\Http\Controllers\Controller;
@@ -30,7 +31,33 @@ class RevisionController extends Controller
                 $query->where('user_id', $userId);
             })->distinct()->get();
 
-            return response()->json($themes);
+            // Vérifier s'il y a des révisions pour aujourd'hui
+            $revisionsToday = Revision::where('user_id', $userId)
+                ->where('dateRevision', '=', Carbon::today())
+                ->exists();
+
+            if ($revisionsToday) {
+                return response()->json([
+                    'themes' => $themes,
+                    'nextRevisionInDays' => null // Indique qu'il y a des révisions à faire aujourd'hui
+                ]);
+            }
+
+            // Calculer la date de la prochaine révision
+            $nextRevision = Revision::where('user_id', $userId)
+                ->where('dateRevision', '>', Carbon::today())
+                ->orderBy('dateRevision', 'asc')
+                ->first();
+
+            $nextRevisionInDays = null;
+            if ($nextRevision) {
+                $nextRevisionInDays = Carbon::today()->diffInDays(Carbon::parse($nextRevision->dateRevision));
+            }
+
+            return response()->json([
+                'themes' => $themes,
+                'nextRevisionInDays' => $nextRevisionInDays
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur lors de la récupération des thèmes: ' . $e->getMessage()], 500);
         }

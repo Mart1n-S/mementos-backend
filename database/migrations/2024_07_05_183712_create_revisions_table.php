@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('carte_id');
             $table->integer('niveau');
-            $table->dateTime('dateRevision');
-            $table->dateTime('dateDerniereRevision')->nullable();
+            $table->date('dateRevision');
+            $table->date('dateDerniereRevision')->nullable();
             $table->timestamps();
 
             // Définir les contraintes de clé étrangère
