@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PushController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\UserController;
@@ -56,6 +57,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
  * Route pour mettre à jour un utilisateur
  */
 Route::middleware('auth:sanctum')->put('/user/{id}', [UserController::class, 'update']);
+
+/**
+ * Route pour mettre à jour l'état de l'abonnement d'un utilisateur
+ */
+Route::post('/user/subscription', [UserController::class, 'updateSubscription'])->middleware('auth:sanctum');
+
 
 /**
  * Route pour récupérer les catégories
@@ -137,3 +144,20 @@ Route::delete('/revision/{themeId}', [RevisionController::class, 'deleteThemeFro
  * Route pour supprimer toutes les cartes de la révision de l'utilisateur connecté
  */
 Route::delete('/deleteAll/revision', [RevisionController::class, 'deleteAllRevision'])->middleware('auth:sanctum');
+
+/**
+ * Route pour abonner un utilisateur aux notifications push
+ */
+Route::post('/subscribe', [PushController::class, 'subscribe'])->middleware('auth:sanctum');
+
+
+/**
+ * Route de test pour envoyer une notification push
+ */
+Route::post('/sendNotification', [PushController::class, 'sendNotification']);
+
+/**
+ * Route de test pour envoyer une notification push au premier user trouvé dans la table PushSubscription, donc a utiliser 
+ * si c'est le user que j'ai créé qui est le premier dans la table sinon utiliser sendNotification
+ */
+Route::post('/test-notification', [PushController::class, 'testNotification']);

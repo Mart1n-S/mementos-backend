@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('revisions', function (Blueprint $table) {
+        Schema::create('push_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('carte_id');
-            $table->integer('niveau');
-            $table->dateTime('dateRevision');
-            $table->dateTime('dateDerniereRevision')->nullable();
+            $table->string('endpoint');
+            $table->string('keys_auth');
+            $table->string('keys_p256dh');
             $table->timestamps();
 
-            // Définir les contraintes de clé étrangère
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('carte_id')->references('id')->on('cartes')->onDelete('cascade');
         });
     }
 
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('revisions');
+        Schema::dropIfExists('push_subscriptions');
     }
 };

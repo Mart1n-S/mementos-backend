@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-// use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Revision extends Model
+class PushSubscription extends Model
 {
     use HasFactory;
 
@@ -15,7 +14,7 @@ class Revision extends Model
      *
      * @var string
      */
-    protected $table = 'revisions';
+    protected $table = 'push_subscriptions';
 
     /**
      * The attributes that are mass assignable.
@@ -24,27 +23,17 @@ class Revision extends Model
      */
     protected $fillable = [
         'user_id',
-        'carte_id',
-        'niveau',
-        'dateRevision',
-        'dateDerniereRevision'
+        'endpoint',
+        'keys_auth',
+        'keys_p256dh',
     ];
 
     /**
-     * Get the user that owns the revision.
+     * Get the user that owns the subscription.
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the carte that owns the revision.
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function carte()
-    {
-        return $this->belongsTo(Carte::class);
     }
 }
