@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Carbon\Carbon;
+use App\Models\Carte;
 use App\Models\Theme;
 use App\Models\Revision;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,51 @@ use Illuminate\Support\Facades\Auth;
 
 class RevisionController extends Controller
 {
+
+    public function createRevision($themeId)
+    {
+        try {
+            $user = Auth::user();
+
+            // Vérifier si le thème existe
+            $theme = Theme::findOrFail($themeId);
+
+            // Vérifier si le thème est public ou appartient à l'utilisateur connecté
+            if (!$theme->public && $theme->user_id !== $user->id) {
+                return response()->json(['error' => 'Accès refusé. Le thème et privé.'], 403);
+            }
+
+            // Vérifier si le thème est déjà révisé par l'utilisateur
+            $alreadyRevised = Revision::where('user_id', $user->id)
+                ->whereHas('carte', function ($query) use ($themeId) {
+                    $query->where('theme_id', $themeId);
+                })
+                ->exists();
+
+            if ($alreadyRevised) {
+                return response()->json(['error' => 'Thème déjà révisé.'], 409);
+            }
+
+            // Récupérer toutes les cartes du thème
+            $cartes = Carte::where('theme_id', $themeId)->get();
+
+            // Ajouter des cartes du thème aux révisions
+            foreach ($cartes as $carte) {
+                Revision::create([
+                    'user_id' => $user->id,
+                    'carte_id' => $carte->id,
+                    'niveau' => 1,
+                    'dateRevision' => Carbon::today(),
+                    'dateDerniereRevision' => null
+                ]);
+            }
+
+            return response()->json([$theme]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de l\'ajout du thème à vos révisions: ' . $e->getMessage()], 500);
+        }
+    }
+
     /**
      * Récupère les thèmes révisés par l'utilisateur connecté.
      *

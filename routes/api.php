@@ -131,6 +131,11 @@ Route::put('/cartes/{id}', [CardController::class, 'updateCard'])->middleware('a
 Route::post('/cartes', [CardController::class, 'createCard'])->middleware('auth:sanctum');
 
 /**
+ * Route pour créer une révision pour un utilisateur connecté
+ */
+Route::post('/revision/{themeId}', [RevisionController::class, 'createRevision'])->middleware('auth:sanctum');
+
+/**
  * Route pour récupérer les révisions d'un utilisateur connecté
  */
 Route::get('/revision/{userId}', [RevisionController::class, 'fetchUserRevision'])->middleware('auth:sanctum');
