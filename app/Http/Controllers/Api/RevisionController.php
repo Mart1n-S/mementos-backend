@@ -8,6 +8,7 @@ use App\Models\Theme;
 use App\Models\Revision;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class RevisionController extends Controller
 {
@@ -77,15 +78,16 @@ class RevisionController extends Controller
                 $query->where('user_id', $userId);
             })->distinct()->get();
 
-            // Vérifier s'il y a des révisions pour aujourd'hui
-            $revisionsToday = Revision::where('user_id', $userId)
+            // Compter les révisions pour aujourd'hui
+            $revisionsTodayCount = Revision::where('user_id', $userId)
                 ->where('dateRevision', '=', Carbon::today())
-                ->exists();
+                ->count();
 
-            if ($revisionsToday) {
+            if ($revisionsTodayCount > 0) {
                 return response()->json([
                     'themes' => $themes,
-                    'nextRevisionInDays' => null // Indique qu'il y a des révisions à faire aujourd'hui
+                    'nextRevisionInDays' => null, // Indique qu'il y a des révisions à faire aujourd'hui
+                    'cardRevisionDisponible' => $revisionsTodayCount
                 ]);
             }
 
@@ -102,10 +104,105 @@ class RevisionController extends Controller
 
             return response()->json([
                 'themes' => $themes,
-                'nextRevisionInDays' => $nextRevisionInDays
+                'nextRevisionInDays' => $nextRevisionInDays,
+                'cardRevisionDisponible' => 0
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur lors de la récupération des thèmes: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Récupérer le nombre de cartes à réviser pour aujourd'hui choisi par l'utilisateur connecté.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCardsForToday(Request $request)
+    {
+        $request->validate([
+            'number_of_cards' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $user = Auth::user();
+            $numberOfCards = $request->number_of_cards;
+
+            // Récupérer les révisions pour aujourd'hui
+            $revisionsToday = Revision::where('user_id', $user->id)
+                ->where('dateRevision', '=', Carbon::today())
+                ->get();
+
+            $availableCardsCount = $revisionsToday->count();
+
+            if ($numberOfCards > $availableCardsCount) {
+                return response()->json(['error' => 'Le nombre de cartes demandé est supérieur au nombre de cartes disponibles.'], 400);
+            }
+
+            // Mélanger les révisions et sélectionner le nombre de cartes demandé
+            $revisionsToday = $revisionsToday->shuffle()->take($numberOfCards);
+
+            $cards = $revisionsToday->map(function ($revision) {
+                return [
+                    'id' => $revision->carte->id,
+                    'question' => $revision->carte->question,
+                    'reponse' => $revision->carte->reponse,
+                    'theme' => $revision->carte->theme,
+                ];
+            });
+
+            return response()->json($cards);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la récupération des cartes à réviser: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Mettre à jour le niveau d'une carte qui est révisée.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateRevision(Request $request)
+    {
+        try {
+
+
+            $request->validate([
+                'id' => 'required|integer|exists:revisions,carte_id',
+                'is_correct' => 'required|boolean',
+            ]);
+
+            $user = Auth::user();
+            $carteId = $request->id;
+            $isCorrect = $request->is_correct;
+
+            $revision = Revision::where('user_id', $user->id)
+                ->where('carte_id', $carteId)
+                ->firstOrFail();
+
+            // Niveau maximum en fonction du niveau de révision de l'utilisateur
+            $maxNiveau = min($user->niveauRevision, 7);
+
+            // Mise à jour du niveau en fonction de la réponse
+            if ($isCorrect) {
+                $newNiveau = min($revision->niveau + 1, $maxNiveau);
+            } else {
+                $newNiveau = 1;
+            }
+
+            // Calcul de la nouvelle date de révision en fonction du niveau
+            $newDateRevision = Carbon::today()->addDays(2 ** ($newNiveau - 1));
+
+            // Mise à jour de la révision
+            $revision->niveau = $newNiveau;
+            $revision->dateRevision = $newDateRevision;
+            $revision->dateDerniereRevision = Carbon::today();
+            $revision->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la mise à jour de la révision: ' . $e->getMessage()], 500);
         }
     }
 
