@@ -83,11 +83,16 @@ class RevisionController extends Controller
                 ->where('dateRevision', '=', Carbon::today())
                 ->count();
 
+            $detailCards = Revision::where('user_id', $userId)
+                ->with(['carte.theme'])
+                ->get();
+
             if ($revisionsTodayCount > 0) {
                 return response()->json([
                     'themes' => $themes,
                     'nextRevisionInDays' => null, // Indique qu'il y a des révisions à faire aujourd'hui
-                    'cardRevisionDisponible' => $revisionsTodayCount
+                    'cardRevisionDisponible' => $revisionsTodayCount,
+                    'detailCards' => $detailCards
                 ]);
             }
 
