@@ -21,7 +21,7 @@ class RevisionFactory extends Factory
             'user_id' => 1,
             'carte_id' => null,
             'niveau' => 1,
-            'dateRevision' => Carbon::now()->addDay(),
+            'dateRevision' => Carbon::now(),
         ];
     }
 }

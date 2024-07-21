@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'password',
         'niveauRevision',
+        'subscribedNotifications',
     ];
 
     /**
@@ -68,5 +69,14 @@ class User extends Authenticatable
     public function revisions()
     {
         return $this->hasMany(Revision::class);
+    }
+
+    /**
+     * Get the push subscriptions for the user.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pushSubscriptions()
+    {
+        return $this->hasMany(PushSubscription::class);
     }
 }
