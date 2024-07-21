@@ -9,14 +9,12 @@ class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
+     * Exécutez : php artisan schedule:work
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-
-        // Pour tester : `php artisan schedule:work`
-        // $schedule->command('push:send')->everyMinute();
         $schedule->command('revision:sendDaily')->everyMinute();
+        $schedule->command('revisions:update')->everyMinute();
     }
 
     /**
