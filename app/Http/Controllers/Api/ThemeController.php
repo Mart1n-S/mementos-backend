@@ -278,4 +278,37 @@ class ThemeController extends Controller
             return response()->json(['error' => 'Erreur lors de la duplication du thème: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Duplique un thème public pour un utilisateur non connecté (invité)
+     *
+     * @param $themeId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function duplicateForGuest($themeId)
+    {
+        try {
+            $theme = Theme::with('cartes', 'categorie')->findOrFail($themeId);
+
+            $themeData = [
+                'nom' => $theme->nom,
+                'category_nom' => $theme->categorie->nom,
+                'couleur' => $theme->couleur
+            ];
+
+            $cardsData = $theme->cartes->map(function ($carte) {
+                return [
+                    'question' => $carte->question,
+                    'reponse' => $carte->reponse
+                ];
+            });
+
+            return response()->json([
+                'theme' => $themeData,
+                'cards' => $cardsData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la récupération des thèmes'], 500);
+        }
+    }
 }

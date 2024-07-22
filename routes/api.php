@@ -104,6 +104,11 @@ Route::delete('/themes/{themeId}', [ThemeController::class, 'deleteTheme'])->mid
 Route::post('/themes/duplicate/{themeId}', [ThemeController::class, 'duplicateTheme'])->middleware('auth:sanctum');
 
 /**
+ * Route pour dupliquer un thème public pour un utilisateur non connecté (invité)✅
+ */
+Route::get('/themes/duplicate/guest/{themeId}', [ThemeController::class, 'duplicateForGuest']);
+
+/**
  * Route pour récupérer les cartes d'un thème public✅
  */
 Route::get('/cartes/{themeId}', [CardController::class, 'getCardsByTheme']);
