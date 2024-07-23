@@ -1,0 +1,3106 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "mementos-backend",
+        "description": "Documentation de l'API du projet Mementos",
+        "contact": {
+            "name": "Support Team",
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/",
+            "description": "Demo API Server"
+        }
+    ],
+    "paths": {
+        "/create-user": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Créer un utilisateur",
+                "description": "Enregistre un nouvel utilisateur dans la base de données et retourne les informations de l'utilisateur avec un token d'accès.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Informations nécessaires pour créer un nouvel utilisateur",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pseudo",
+                                    "email",
+                                    "password",
+                                    "niveauRevision",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "niveauRevision": {
+                                        "type": "integer",
+                                        "example": 7
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@exemple.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Pa$$w0rd!"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Pa$$w0rd!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Inscription réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Inscription réussie"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "2|RI1TW2GCppDXR09fE0qyVufn8PBZIYeUk6ohC9ruf180affb"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "pseudo": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The pseudo field must be at least 2 characters."
+                                                    }
+                                                },
+                                                "niveauRevision": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The niveau revision field must not be greater than 7."
+                                                    }
+                                                },
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email has already been taken."
+                                                    }
+                                                },
+                                                "password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The password field must be at least 8 characters."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne au serveur s'est produite"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Connecter un utilisateur",
+                "description": "Permet à un utilisateur de se connecter en utilisant ses credentials et retourne un token d'accès en cas de succès.",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "description": "Les identifiants de connexion nécessaires",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@exemple.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Pa$$w0rd!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur connecté avec succès"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "6|pnlfhRkVBhmFiJKV1Qi..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Erreur d'authentification",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email ou mot de passe incorrect"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne au serveur s'est produite"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Déconnecter l'utilisateur",
+                "description": "Déconnecte l'utilisateur en révoquant son token d'accès actuel. Nécessite un token d'accès valide pour l'authentification.",
+                "operationId": "logoutUser",
+                "responses": {
+                    "200": {
+                        "description": "Déconnexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Déconnexion réussie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/forgot-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Demande de réinitialisation de mot de passe",
+                "description": "Envoie un lien de réinitialisation de mot de passe à l'email fourni si l'utilisateur est enregistré. </br> Ne révèle pas si l'email est enregistré pour des raisons de sécurité.",
+                "operationId": "forgotPassword",
+                "requestBody": {
+                    "description": "Email de l'utilisateur pour lequel la réinitialisation du mot de passe est demandée",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@exemple.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email de réinitialisation envoyé si l'utilisateur est trouvé, réponse vide sinon. La réponse ne révèle pas si l'email est enregistré. </br> <strong>Uniquement pour la présentation</strong>",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "kuk2dUqMYNs3dA..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données de la requête",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The email field must be a valid email address."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email field must be a valid email address."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne est survenue."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Réinitialiser le mot de passe d'un utilisateur",
+                "description": "Permet à un utilisateur de réinitialiser son mot de passe en utilisant un token de réinitialisation. Le token doit être valide et l'email doit correspondre à un utilisateur existant. </br> <strong>Remplacez le token par celui récupéré avec 'forgot-password'.</strong>",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "description": "Données nécessaires pour réinitialiser le mot de passe.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "naANvEQXt4zB8...(Remplacez le token par celui récupéré avec l'option 'forgot-password')"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@exemple.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "J0hnEx@ample13"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "J0hnEx@ample13"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mot de passe réinitialisé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Mot de passe réinitialisé avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données de la requête",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "description": "Détails des erreurs de validation",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Token invalide ou Utilisateur non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token invalide ou Utilisateur non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne est survenue"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cartes/{themeId}": {
+            "get": {
+                "tags": [
+                    "Cartes"
+                ],
+                "summary": "Récupère toutes les cartes d'un thème public spécifique",
+                "description": "Retourne toutes les cartes d'un thème public spécifique avec les informations sur le thème et l'utilisateur associé.",
+                "operationId": "getCardsByTheme",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "Identifiant du thème pour lequel récupérer les cartes",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cartes récupérées avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "required": [
+                                            "id",
+                                            "question",
+                                            "reponse",
+                                            "theme_id",
+                                            "created_at",
+                                            "updated_at",
+                                            "theme"
+                                        ],
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 66
+                                            },
+                                            "question": {
+                                                "type": "string",
+                                                "example": "Quelle est la définition de la dérivée d'une fonction ?"
+                                            },
+                                            "reponse": {
+                                                "type": "string",
+                                                "example": "Le taux de variation instantané"
+                                            },
+                                            "theme_id": {
+                                                "type": "integer",
+                                                "example": 14
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-07-22T17:57:30.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-07-22T17:57:30.000000Z"
+                                            },
+                                            "deleted_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "nullable": true
+                                            },
+                                            "theme": {
+                                                "required": [
+                                                    "id",
+                                                    "user_id",
+                                                    "category_id",
+                                                    "nom",
+                                                    "couleur",
+                                                    "public",
+                                                    "created_at",
+                                                    "updated_at"
+                                                ],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 14
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "category_id": {
+                                                        "type": "integer",
+                                                        "example": 7
+                                                    },
+                                                    "nom": {
+                                                        "type": "string",
+                                                        "example": "Calcul différentiel"
+                                                    },
+                                                    "couleur": {
+                                                        "type": "string",
+                                                        "example": "#FF4500"
+                                                    },
+                                                    "public": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-22T17:57:29.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-22T17:57:29.000000Z"
+                                                    },
+                                                    "deleted_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "user": {
+                                                        "required": [
+                                                            "id",
+                                                            "pseudo",
+                                                            "email",
+                                                            "email_verified_at",
+                                                            "niveauRevision",
+                                                            "subscribedNotifications",
+                                                            "created_at",
+                                                            "updated_at"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "pseudo": {
+                                                                "type": "string",
+                                                                "example": "Martin"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "format": "email",
+                                                                "example": "martin@gmail.com"
+                                                            },
+                                                            "email_verified_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-07-22T17:57:29.000000Z"
+                                                            },
+                                                            "niveauRevision": {
+                                                                "type": "integer",
+                                                                "example": 7
+                                                            },
+                                                            "subscribedNotifications": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-07-22T17:57:29.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-07-23T07:55:24.000000Z"
+                                                            },
+                                                            "deleted_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Thème non trouvé ou n'est pas public",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Thème non trouvé ou n'est pas public"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cartes/{themeId}/user": {
+            "get": {
+                "tags": [
+                    "Cartes"
+                ],
+                "summary": "Récupérer les cartes d'un thème pour l'utilisateur connecté",
+                "description": "Retourne toutes les cartes associées à un thème spécifique appartenant à l'utilisateur connecté.",
+                "operationId": "getCardsByThemeForUser",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "Identifiant du thème pour lequel récupérer les cartes",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Opération réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Carte"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Accès non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération des cartes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cartes": {
+            "post": {
+                "tags": [
+                    "Cartes"
+                ],
+                "summary": "Crée une nouvelle carte pour un thème spécifique",
+                "description": "Ajoute une nouvelle carte au thème spécifié, appartenant à l'utilisateur connecté.",
+                "operationId": "createCard",
+                "requestBody": {
+                    "description": "Données de la nouvelle carte",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "question",
+                                    "reponse",
+                                    "theme_id"
+                                ],
+                                "properties": {
+                                    "question": {
+                                        "description": "La question de la carte",
+                                        "type": "string",
+                                        "example": "Test question"
+                                    },
+                                    "reponse": {
+                                        "description": "La réponse de la carte",
+                                        "type": "string",
+                                        "example": "Test réponse"
+                                    },
+                                    "theme_id": {
+                                        "description": "Identifiant du thème auquel la carte sera ajoutée",
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "example": 14
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Carte créée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Carte"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données de la requête",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "description": "Détail des erreurs de validation",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la création de la carte"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cartes/{carteId}": {
+            "delete": {
+                "tags": [
+                    "Cartes"
+                ],
+                "summary": "Supprime une carte spécifique",
+                "description": "Supprime une carte appartenant à l'utilisateur connecté, en vérifiant que la carte appartient bien à l'utilisateur.",
+                "operationId": "deleteCard",
+                "parameters": [
+                    {
+                        "name": "carteId",
+                        "in": "path",
+                        "description": "Identifiant de la carte à supprimer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carte supprimée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Carte supprimée avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Erreur lors de la suppression de la carte ou accès non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la suppression de la carte ou accès non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cartes/{id}": {
+            "put": {
+                "tags": [
+                    "Cartes"
+                ],
+                "summary": "Mise à jour d'une carte spécifique",
+                "description": "Permet à l'utilisateur connecté de mettre à jour une carte spécifique, si celui-ci est le propriétaire du thème auquel la carte appartient.",
+                "operationId": "updateCard",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant de la carte à mettre à jour",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Données nécessaires pour la mise à jour de la carte",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "question",
+                                    "reponse"
+                                ],
+                                "properties": {
+                                    "question": {
+                                        "description": "La nouvelle question de la carte",
+                                        "type": "string",
+                                        "example": "Test question UPDATED"
+                                    },
+                                    "reponse": {
+                                        "description": "La nouvelle réponse de la carte",
+                                        "type": "string",
+                                        "example": "Test réponse UPDATED"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Carte mise à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Carte"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé si l'utilisateur n'est pas propriétaire du thème de la carte",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Accès non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Carte non trouvée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Carte non trouvée"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données de la requête",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "messages": {
+                                            "description": "Détails des erreurs de validation",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la mise à jour de la carte ou accès non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Liste toutes les catégories",
+                "description": "Récupère une liste de toutes les catégories disponibles (public).",
+                "operationId": "getCategories",
+                "responses": {
+                    "200": {
+                        "description": "Opération réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Categorie"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne est survenue"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/subscribe": {
+            "post": {
+                "tags": [
+                    "Push"
+                ],
+                "summary": "Abonner un utilisateur aux notifications push",
+                "description": "Enregistre ou met à jour l'abonnement aux notifications push pour l'utilisateur connecté.",
+                "operationId": "subscribe",
+                "requestBody": {
+                    "description": "Données d'abonnement push requises",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "endpoint",
+                                    "keys.auth",
+                                    "keys.p256dh"
+                                ],
+                                "properties": {
+                                    "endpoint": {
+                                        "type": "string",
+                                        "example": "https://fcm.googleapis.com/fcm/send/eABc123YZ"
+                                    },
+                                    "keys": {
+                                        "properties": {
+                                            "auth": {
+                                                "type": "string",
+                                                "example": "base64-encoded-auth-key"
+                                            },
+                                            "p256dh": {
+                                                "type": "string",
+                                                "example": "base64-encoded-p256dh-key"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Abonnement réussi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données fournies",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The endpoint field is required."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "endpoint": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The endpoint field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur interne du serveur"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/revision/{themeId}": {
+            "post": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Créer une révision pour un thème",
+                "description": "Ajoute toutes les cartes d'un thème spécifique aux révisions de l'utilisateur connecté, à condition que le thème soit public ou appartienne à l'utilisateur.",
+                "operationId": "createRevision",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "L'identifiant du thème pour lequel créer une révision",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Révision créée avec succès, renvoie les détails du thème révisé.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Theme"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé si le thème est privé et n'appartient pas à l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Accès refusé. Le thème et privé."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Thème déjà révisé par l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Thème déjà révisé."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la tentative d'ajout du thème aux révisions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de l'ajout du thème à vos révisions: message d'erreur"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Supprimer un thème des révisions de l'utilisateur connecté",
+                "description": "Supprime toutes les révisions associées à un thème spécifique pour l'utilisateur connecté.",
+                "operationId": "deleteThemeFromRevision",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "Identifiant du thème à supprimer des révisions",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thème supprimé des révisions avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thème supprimé des révisions avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la suppression du thème des révisions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la suppression du thème des révisions: <error message>"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/revision/{userId}": {
+            "get": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Récupérer les révisions d'un utilisateur",
+                "description": "Récupère toutes les révisions associées à un utilisateur spécifique, incluant des détails sur les thèmes et les cartes révisées.",
+                "operationId": "fetchUserRevision",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Identifiant de l'utilisateur pour lequel récupérer les révisions",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Révisions de l'utilisateur récupérées avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "themes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Theme"
+                                            }
+                                        },
+                                        "nextRevisionInDays": {
+                                            "description": "Jours jusqu'à la prochaine révision, null si des révisions sont dues aujourd'hui",
+                                            "type": "integer",
+                                            "nullable": true
+                                        },
+                                        "cardRevisionDisponible": {
+                                            "description": "Nombre de cartes disponibles pour la révision aujourd'hui",
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "detailCards": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 33
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 21
+                                                    },
+                                                    "carte_id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 1
+                                                    },
+                                                    "niveau": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "dateRevision": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-07-23"
+                                                    },
+                                                    "dateDerniereRevision": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-23T10:51:47.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-23T10:51:47.000000Z"
+                                                    },
+                                                    "carte": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "format": "int64",
+                                                                "example": 1
+                                                            },
+                                                            "question": {
+                                                                "type": "string",
+                                                                "example": "Quelle invention a révolutionné l'Europe pendant la Renaissance ?"
+                                                            },
+                                                            "reponse": {
+                                                                "type": "string",
+                                                                "example": "L'imprimerie"
+                                                            },
+                                                            "theme_id": {
+                                                                "type": "integer",
+                                                                "format": "int64",
+                                                                "example": 1
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-07-22T17:57:30.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-07-22T17:57:30.000000Z"
+                                                            },
+                                                            "deleted_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "nullable": true
+                                                            },
+                                                            "theme": {
+                                                                "$ref": "#/components/schemas/Theme"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la récupération des révisions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération des thèmes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/revision/nombre-cartes": {
+            "post": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Sélectionner le nombre de cartes à réviser pour aujourd'hui",
+                "description": "Permet à l'utilisateur connecté de récupérer un nombre spécifique de cartes à réviser pour la journée, mélange les cartes disponibles et les renvoie.",
+                "operationId": "getCardsForToday",
+                "requestBody": {
+                    "description": "Nombre de cartes à réviser pour la journée",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number_of_cards"
+                                ],
+                                "properties": {
+                                    "number_of_cards": {
+                                        "description": "Le nombre de cartes que l'utilisateur souhaite réviser aujourd'hui",
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retourne les cartes à réviser pour la journée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "question": {
+                                                "type": "string",
+                                                "example": "Quelle est la définition de la dérivée d'une fonction ?"
+                                            },
+                                            "reponse": {
+                                                "type": "string",
+                                                "example": "Le taux de variation instantané"
+                                            },
+                                            "theme": {
+                                                "$ref": "#/components/schemas/Theme"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation: le nombre de cartes demandé est supérieur au nombre de cartes disponibles.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Le nombre de cartes demandé est supérieur au nombre de cartes disponibles."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération des cartes à réviser."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/revision": {
+            "put": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Mettre à jour le niveau d'une carte révisée",
+                "operationId": "updateRevision",
+                "requestBody": {
+                    "description": "Données nécessaires pour mettre à jour la révision",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "is_correct"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "description": "Identifiant de la carte à réviser",
+                                        "type": "integer",
+                                        "example": 111
+                                    },
+                                    "is_correct": {
+                                        "description": "Indique si la réponse était correcte",
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Révision mise à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur lors de la mise à jour de la révision",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la mise à jour de la révision: détail de l'erreur"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/revision/deleteAll": {
+            "delete": {
+                "tags": [
+                    "Revision"
+                ],
+                "summary": "Supprimer toutes les révisions de l'utilisateur connecté",
+                "description": "Effectue une suppression physique de toutes les révisions associées à l'utilisateur connecté.",
+                "operationId": "deleteAllRevision",
+                "responses": {
+                    "200": {
+                        "description": "Toutes les révisions ont été supprimées avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Toutes les révisions ont été supprimées avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la suppression des révisions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la suppression des révisions: <error message>"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes/{categorie}": {
+            "get": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Récupérer les thèmes par catégorie",
+                "description": "Récupère tous les thèmes publics associés à une catégorie spécifique.",
+                "operationId": "getThemesByCategorie",
+                "parameters": [
+                    {
+                        "name": "categorie",
+                        "in": "path",
+                        "description": "Nom de la catégorie pour laquelle récupérer les thèmes (ex : Histoire)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des thèmes récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Theme"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/themes/{userId}/user": {
+            "get": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Récupérer les thèmes d'un utilisateur spécifique",
+                "description": "Retourne tous les thèmes associés à l'ID utilisateur spécifié, accessible uniquement par l'utilisateur connecté correspondant à l'ID.",
+                "operationId": "getThemesByUser",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID de l'utilisateur pour lequel récupérer les thèmes",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thèmes de l'utilisateur récupérés avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Theme"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé si l'utilisateur connecté ne correspond pas à l'ID utilisateur demandé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération des thèmes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes/infos/{themeId}": {
+            "get": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Récupérer un thème spécifique",
+                "description": "Retourne les détails d'un thème spécifique, accessible uniquement par l'utilisateur connecté qui en est le propriétaire.",
+                "operationId": "getThemeById",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "ID du thème à récupérer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 23
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thème récupéré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Theme"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé si l'utilisateur connecté ne correspond pas au propriétaire du thème",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération du thème ou accès non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur serveur"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes": {
+            "post": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Créer un nouveau thème",
+                "description": "Permet à l'utilisateur connecté de créer un nouveau thème avec des cartes associées.",
+                "operationId": "createTheme",
+                "requestBody": {
+                    "description": "Les données nécessaires pour créer un nouveau thème et des cartes associées",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "category_id",
+                                    "public",
+                                    "cards"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "THEME TEST"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "public": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "cards": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "question",
+                                                "reponse"
+                                            ],
+                                            "properties": {
+                                                "question": {
+                                                    "type": "string",
+                                                    "example": "Test question"
+                                                },
+                                                "reponse": {
+                                                    "type": "string",
+                                                    "example": "Test réponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Thème créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Theme"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données d'entrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "description": "Objet contenant les messages d'erreur de validation pour chaque champ",
+                                            "properties": {
+                                                "nom": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The nom field must be at least 3 characters."
+                                                    }
+                                                },
+                                                "category_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected category_id is invalid."
+                                                    }
+                                                },
+                                                "public": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The public field must be true or false."
+                                                    }
+                                                },
+                                                "cards": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The cards field is required."
+                                                    }
+                                                },
+                                                "cards.*.question": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The cards.*.question field must not be empty."
+                                                    }
+                                                },
+                                                "cards.*.reponse": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The cards.*.reponse field must not be empty."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la création du thème"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes/{themeId}": {
+            "put": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Mettre à jour un thème",
+                "description": "Permet à l'utilisateur connecté de mettre à jour les détails d'un thème spécifique dont il est propriétaire.",
+                "operationId": "updateTheme",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "ID du thème à mettre à jour",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 23
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Les données nécessaires pour mettre à jour le thème",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "category_id",
+                                    "public"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Nutrition et bien-être"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "public": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Thème mis à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Theme"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé si l'utilisateur connecté ne correspond pas au propriétaire du thème ou le thème est introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Accès non autorisé ou thème non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données d'entrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la mise à jour du thème"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Supprimer un thème",
+                "description": "Supprime un thème spécifique si l'utilisateur connecté est le propriétaire du thème.",
+                "operationId": "deleteTheme",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "Identifiant unique du thème à supprimer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thème supprimé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thème supprimé avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé ou thème non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Accès non autorisé ou thème non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la suppression du thème",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la suppression du thème"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes/duplicate/{themeId}": {
+            "post": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Dupliquer un thème public pour les utilisateurs connectés",
+                "description": "Crée une copie d'un thème public pour l'utilisateur connecté, le nouveau thème est marqué comme privé.",
+                "operationId": "duplicateTheme",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "Identifiant unique du thème à dupliquer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Thème dupliqué avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "category_id": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Innovations en technologie"
+                                        },
+                                        "couleur": {
+                                            "type": "string",
+                                            "example": "#636363"
+                                        },
+                                        "public": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-07-23T09:21:40.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-07-23T09:21:40.000000Z"
+                                        },
+                                        "deleted_at": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 47
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé, tentative de dupliquer son propre thème",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Vous ne pouvez pas dupliquer votre propre thème"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur lors de la duplication du thème",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la duplication du thème: [message d'erreur]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/themes/duplicate/guest/{themeId}": {
+            "get": {
+                "tags": [
+                    "Themes"
+                ],
+                "summary": "Dupliquer un thème pour un invité",
+                "description": "Récupère un thème public spécifié par son ID et le duplique pour un usage par un utilisateur non connecté, renvoyant les données de base du thème ainsi que les cartes associées.",
+                "operationId": "duplicateThemeForGuest",
+                "parameters": [
+                    {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "ID du thème public à dupliquer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thème dupliqué avec succès pour un invité",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "theme": {
+                                            "properties": {
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "La Renaissance"
+                                                },
+                                                "category_nom": {
+                                                    "type": "string",
+                                                    "example": "Histoire"
+                                                },
+                                                "couleur": {
+                                                    "type": "string",
+                                                    "example": "#A88DFF"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "cards": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "question": {
+                                                        "type": "string",
+                                                        "example": "Quelle invention a révolutionné l'Europe pendant la Renaissance ?"
+                                                    },
+                                                    "reponse": {
+                                                        "type": "string",
+                                                        "example": "L'imprimerie"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération des thèmes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Récupérer les informations de l'utilisateur connecté",
+                "description": "Permet de récupérer les informations de l'utilisateur connecté en utilisant le token d'accès fourni dans les headers. Pensez à créer l'utilisateur et à le connecter pour récupérer le token, puis à le configurer dans Authorize",
+                "operationId": "getUserInfo",
+                "responses": {
+                    "200": {
+                        "description": "Informations de l'utilisateur récupérées avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "pseudo": {
+                                            "type": "string",
+                                            "example": "Martin"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "martin@gmail.com"
+                                        },
+                                        "email_verified_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-07-22T17:57:29.000000Z"
+                                        },
+                                        "niveauRevision": {
+                                            "type": "integer",
+                                            "example": 7
+                                        },
+                                        "subscribedNotifications": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-07-22T17:57:29.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-07-22T17:57:29.000000Z"
+                                        },
+                                        "deleted_at": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Non autorisé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Une erreur interne au serveur s'est produite"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/{id}": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Mettre à jour les informations de l'utilisateur",
+                "description": "Met à jour les informations d'un utilisateur spécifique par ID. L'utilisateur doit être authentifié et correspondre à l'ID spécifié.",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de l'utilisateur à mettre à jour",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Données de l'utilisateur à mettre à jour",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pseudo",
+                                    "niveauRevision"
+                                ],
+                                "properties": {
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "Martin"
+                                    },
+                                    "niveauRevision": {
+                                        "type": "integer",
+                                        "example": 7
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur mis à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Utilisateur mis à jour avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour modifier les informations d'un autre utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous ne pouvez pas modifier les informations d'un autre utilisateur."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Veuillez vérifier les erreurs de validation"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/subscription": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Mettre à jour l'état de l'abonnement de notifications de l'utilisateur",
+                "description": "Met à jour l'abonnement aux notifications push de l'utilisateur authentifié.",
+                "operationId": "updateSubscription",
+                "requestBody": {
+                    "description": "Statut de l'abonnement à mettre à jour",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "isSubscribed"
+                                ],
+                                "properties": {
+                                    "isSubscribed": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Abonnement mis à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur de la base de données lors de la mise à jour de l'abonnement."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "title": "User",
+                "description": "Schema d'un user",
+                "required": [
+                    "id",
+                    "pseudo",
+                    "email",
+                    "niveauRevision",
+                    "subscribedNotifications",
+                    "password"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": "1"
+                    },
+                    "pseudo": {
+                        "type": "string",
+                        "example": "johndoe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-01T00:00:00Z"
+                    },
+                    "niveauRevision": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "subscribedNotifications": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-02T00:00:00Z"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "YourSecurePassword"
+                    }
+                },
+                "type": "object"
+            },
+            "Carte": {
+                "title": "Carte",
+                "description": "Schéma d'une carte associée à un thème",
+                "required": [
+                    "id",
+                    "question",
+                    "reponse",
+                    "theme_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 66
+                    },
+                    "question": {
+                        "type": "string",
+                        "example": "Quelle est la définition de la dérivée d'une fonction ?"
+                    },
+                    "reponse": {
+                        "type": "string",
+                        "example": "Le taux de variation instantané"
+                    },
+                    "theme_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 14
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-22T17:57:30.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-22T17:57:30.000000Z"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Categorie": {
+                "title": "Categorie",
+                "description": "Schéma d'une catégorie",
+                "required": [
+                    "id",
+                    "nom",
+                    "pathImage",
+                    "couleur"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nom": {
+                        "type": "string",
+                        "example": "Science"
+                    },
+                    "pathImage": {
+                        "type": "string",
+                        "example": "image.jpg"
+                    },
+                    "couleur": {
+                        "type": "string",
+                        "example": "#FFFFFF"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "null"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-02T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "RevisionCarte": {
+                "title": "Révision",
+                "description": "Détails d'une carte spécifique dans le cadre de sa révision",
+                "required": [
+                    "id",
+                    "user_id",
+                    "carte_id",
+                    "niveau"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 66
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "carte_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 16
+                    },
+                    "niveau": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-22T17:57:30.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-22T17:57:30.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Theme": {
+                "title": "Theme",
+                "description": "Schéma d'un thème",
+                "required": [
+                    "id",
+                    "user_id",
+                    "category_id",
+                    "nom",
+                    "couleur",
+                    "public"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nom": {
+                        "type": "string",
+                        "example": "Thème de la biologie"
+                    },
+                    "couleur": {
+                        "type": "string",
+                        "example": "#FFFFFF"
+                    },
+                    "public": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-02T00:00:00Z"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-01-02T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Cartes",
+            "description": "Cartes"
+        },
+        {
+            "name": "Categories",
+            "description": "Categories"
+        },
+        {
+            "name": "Push",
+            "description": "Push"
+        },
+        {
+            "name": "Revision",
+            "description": "Revision"
+        },
+        {
+            "name": "Themes",
+            "description": "Themes"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        }
+    ]
+}
