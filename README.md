@@ -45,7 +45,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
 
 ### Étapes d'Installation
 
-1. **Clonage du dépôt**
+1.  **Clonage du dépôt**
 
     Clonez le dépôt Git en utilisant la commande suivante :
 
@@ -60,7 +60,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     git checkout userGuest
     ```
 
-2. **Installation des dépendances**
+2.  **Installation des dépendances**
 
     Installez toutes les dépendances PHP nécessaires à l'aide de Composer :
 
@@ -68,7 +68,11 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     composer install
     ```
 
-3. **Génération de la clé d'application**
+3.  **Configuration de l'environnement**
+
+    Copiez le fichier .env.example en .env
+
+4.  **Génération de la clé d'application**
 
     Générez une nouvelle clé d'application Laravel. Cette clé est utilisée pour sécuriser vos sessions utilisateur et autres données cryptées :
 
@@ -76,7 +80,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     php artisan key:generate
     ```
 
-4. **Monter les containers**
+5.  **Monter les containers**
 
     Lancez les containers Docker nécessaires pour le projet avec Docker Compose.
 
@@ -84,13 +88,33 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     docker-compose up -d
     ```
 
-5. **Migration et seeding de la base de données**
+6.  **Migration et seeding de la base de données**
 
     Créez les tables dans votre base de données et remplissez-les avec des données de test (si nécessaire) :
 
     ```bash
     php artisan migrate --seed
     ```
+
+7.  **Lancer le serveur**
+
+    Pour démarrer le serveur de développement et accéder à l'application localement, exécutez la commande suivante :
+
+    ```bash
+    php artisan serve
+    ```
+
+8.  **Tester les notifications et mise à jour des révisions**
+
+        Après avoir configuré le frontend, vous être connecté, et accepté les notifications, vous pouvez tester le système de notifications en exécutant :
+        ```bash
+        php artisan schedule:work
+        ```
+        Cette commande lance les tâches planifiées qui incluent SendDailyRevisionNotifications. Cette tâche envoie des notifications aux utilisateurs pour les rappeler de leurs révisions quotidiennes.
+
+        Mise à jour des révisions
+
+    Le système est également équipé de seeders qui pré-configurent des données, y compris des cartes qui n'ont pas été révisées à temps. La commande ci-dessus activera également un script (UpdateRevisions) qui met à jour les révisions manquées pour s'assurer que le programme de révision est à jour.
 
 ## Accéder à Mailpit 📧
 
