@@ -68,11 +68,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     composer install
     ```
 
-3. **Configuration de l'environnement**
-
-    Copiez le fichier .env.example en .env et modifiez les configurations nécessaires (base de données, mail, etc.)
-
-4. **Génération de la clé d'application**
+3. **Génération de la clé d'application**
 
     Générez une nouvelle clé d'application Laravel. Cette clé est utilisée pour sécuriser vos sessions utilisateur et autres données cryptées :
 
@@ -80,7 +76,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     php artisan key:generate
     ```
 
-5. **Monter les containers**
+4. **Monter les containers**
 
     Lancez les containers Docker nécessaires pour le projet avec Docker Compose.
 
@@ -88,7 +84,7 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     docker-compose up -d
     ```
 
-6. **Migration et seeding de la base de données**
+5. **Migration et seeding de la base de données**
 
     Créez les tables dans votre base de données et remplissez-les avec des données de test (si nécessaire) :
 
