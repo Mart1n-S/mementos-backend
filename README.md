@@ -1,6 +1,6 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<h1 align="center">MEMENTOS</h1><br>
+<h1 align="center">MEMENTOS (Backend)</h1><br>
 
 # Projet de Mémorisation </br> Basée sur la Répétition Espacée🧙‍♂️
 
@@ -96,9 +96,25 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     php artisan migrate --seed
     ```
 
-## Pour la configuration du frontend
+## Accéder à Mailpit 📧
+
+> [Mailpit](http://localhost:8025/)
+
+## Accéder à phpMyAdmin ⚙️
+
+Voir les identifiants dans docker-compose.yml
+
+> [phpMyAdmin](http://localhost:8080/)
+
+## Pour la configuration du frontend 😶‍🌫️
 
 > [GitHub mementos-frontend](https://github.com/Mart1n-S/mementos-frontend)
+
+## Documentation OpenAPI 🧪
+
+Pour consulter la documentation OpenAPI générée qui décrit tous les endpoints de l'API et leurs spécifications, visitez le lien suivant :
+
+> [Documentation OpenAPI](http://localhost:8000/api/documentation)
 
 ## Petit aperçu 👀
 
@@ -112,4 +128,3 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     <td><img src=".github/images/view4.png" width="250" alt="vue site 4"/></td>
   </tr>
 </table>
-
