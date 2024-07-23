@@ -102,7 +102,14 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
 
 ## Petit aperçu 👀
 
-<img src=".github/images/view1.png" width="250" alt="vue site"/>
-<img src=".github/images/view2.png" width="250" alt="vue site 2"/>
-<img src=".github/images/view3.png" width="250" alt="vue site 3"/>
-<img src=".github/images/view4.png" width="250" alt="vue site 4"/><br>
+<table>
+  <tr>
+    <td><img src=".github/images/view1.png" width="250" alt="vue site"/></td>
+    <td><img src=".github/images/view2.png" width="250" alt="vue site 2"/></td>
+  </tr>
+  <tr>
+    <td><img src=".github/images/view3.png" width="250" alt="vue site 3"/></td>
+    <td><img src=".github/images/view4.png" width="250" alt="vue site 4"/></td>
+  </tr>
+</table>
+
