@@ -106,13 +106,15 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
 
 8.  **Tester les notifications et mise à jour des révisions**
 
-        Après avoir configuré le frontend, vous être connecté, et accepté les notifications, vous pouvez tester le système de notifications en exécutant :
-        ```bash
-        php artisan schedule:work
-        ```
-        Cette commande lance les tâches planifiées qui incluent SendDailyRevisionNotifications. Cette tâche envoie des notifications aux utilisateurs pour les rappeler de leurs révisions quotidiennes.
+    Après avoir configuré le frontend, vous être connecté, et accepté les notifications, vous pouvez tester le système de notifications en exécutant :
 
-        Mise à jour des révisions
+    ```bash
+    php artisan schedule:work
+    ```
+
+    Cette commande lance les tâches planifiées qui incluent SendDailyRevisionNotifications. Cette tâche envoie des notifications aux utilisateurs pour les rappeler de leurs révisions quotidiennes.
+
+    ### Mise à jour des révisions
 
     Le système est également équipé de seeders qui pré-configurent des données, y compris des cartes qui n'ont pas été révisées à temps. La commande ci-dessus activera également un script (UpdateRevisions) qui met à jour les révisions manquées pour s'assurer que le programme de révision est à jour.
 
