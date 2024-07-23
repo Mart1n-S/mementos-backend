@@ -2,7 +2,7 @@
 
 <h1 align="center">MEMENTOS</h1><br>
 
-# Projet de Mémorisation Basée sur la Répétition Espacée 🧙‍♂️
+# Projet de Mémorisation </br> Basée sur la Répétition Espacée🧙‍♂️
 
 L'objectif de ce projet est de concevoir et développer une application de mémorisation basée sur la répétition espacée. Le principe de la répétition espacée est détaillé [ici](https://ncase.me/remember/fr.html).
 
