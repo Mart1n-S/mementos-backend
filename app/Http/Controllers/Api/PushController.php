@@ -16,60 +16,6 @@ class PushController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    /**
-     * @OA\Post(
-     *   path="/subscribe",
-     *   summary="Abonner un utilisateur aux notifications push",
-     *   description="Enregistre ou met à jour l'abonnement aux notifications push pour l'utilisateur connecté.",
-     *   operationId="subscribe",
-     *   tags={"Push"},
-     *   security={{"sanctum": {}}},
-     *   @OA\RequestBody(
-     *     required=true,
-     *     description="Données d'abonnement push requises",
-     *     @OA\JsonContent(
-     *       required={"endpoint", "keys.auth", "keys.p256dh"},
-     *       @OA\Property(property="endpoint", type="string", example="https://fcm.googleapis.com/fcm/send/eABc123YZ"),
-     *       @OA\Property(
-     *         property="keys",
-     *         type="object",
-     *         @OA\Property(property="auth", type="string", example="base64-encoded-auth-key"),
-     *         @OA\Property(property="p256dh", type="string", example="base64-encoded-p256dh-key")
-     *       )
-     *     )
-     *   ),
-     *   @OA\Response(
-     *     response=200,
-     *     description="Abonnement réussi",
-     *     @OA\JsonContent(
-     *       @OA\Property(property="success", type="boolean", example=true)
-     *     )
-     *   ),
-     *   @OA\Response(
-     *     response=422,
-     *     description="Erreur de validation des données fournies",
-     *     @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="The endpoint field is required."),
-     *       @OA\Property(
-     *         property="errors",
-     *         type="object",
-     *         @OA\Property(
-     *           property="endpoint",
-     *           type="array",
-     *           @OA\Items(type="string", example="The endpoint field is required.")
-     *         )
-     *       )
-     *     )
-     *   ),
-     *   @OA\Response(
-     *     response=500,
-     *     description="Erreur interne du serveur",
-     *     @OA\JsonContent(
-     *       @OA\Property(property="error", type="string", example="Erreur interne du serveur")
-     *     )
-     *   )
-     * )
-     */
     public function subscribe(Request $request)
     {
         $this->validate($request, [
@@ -95,7 +41,7 @@ class PushController extends Controller
     }
 
     /**
-     * Methode pour le test de notification push
+     * Methode pour le test de notification push (TEST DEV)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -145,7 +91,7 @@ class PushController extends Controller
     }
 
     /**
-     * Methode pour le test de notification push 
+     * Methode pour le test de notification push  (TEST DEV)
      * si c'est le user que j'ai créé qui est le premier dans la table sinon utiliser sendNotification
      *
      * @param Request $request
