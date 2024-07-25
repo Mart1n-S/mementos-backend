@@ -20,6 +20,14 @@ class CardController extends Controller
      */
     public function getCardsByTheme($themeId)
     {
+        // Vérifier d'abord si le thème est public
+        $theme = Theme::where('id', $themeId)->where('public', true)->first();
+
+        if (!$theme) {
+            return response()->json(['error' => 'Thème non trouvé ou n\'est pas public'], 404);
+        }
+
+        // Récupérer les cartes associées au thème public
         $cards = Carte::where('theme_id', $themeId)
             ->with(['theme', 'theme.user'])
             ->get();

@@ -248,8 +248,7 @@ class ThemeController extends Controller
             DB::beginTransaction();
 
             $user = Auth::user();
-            $originalTheme = Theme::findOrFail($themeId);
-
+            $originalTheme = Theme::where('id', $themeId)->where('public', true)->firstOrFail();
             // Vérifier que le thème n'appartient pas déjà à l'utilisateur connecté
             if ($originalTheme->user_id === $user->id) {
                 return response()->json(['error' => 'Vous ne pouvez pas dupliquer votre propre thème'], 403);
@@ -276,6 +275,39 @@ class ThemeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Erreur lors de la duplication du thème: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Duplique un thème public pour un utilisateur non connecté (invité)
+     *
+     * @param $themeId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function duplicateForGuest($themeId)
+    {
+        try {
+            $theme = Theme::with('cartes', 'categorie')->where('public', true)->findOrFail($themeId);
+
+            $themeData = [
+                'nom' => $theme->nom,
+                'category_nom' => $theme->categorie->nom,
+                'couleur' => $theme->couleur
+            ];
+
+            $cardsData = $theme->cartes->map(function ($carte) {
+                return [
+                    'question' => $carte->question,
+                    'reponse' => $carte->reponse
+                ];
+            });
+
+            return response()->json([
+                'theme' => $themeData,
+                'cards' => $cardsData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la récupération des thèmes'], 500);
         }
     }
 }

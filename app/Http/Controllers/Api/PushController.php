@@ -41,7 +41,7 @@ class PushController extends Controller
     }
 
     /**
-     * Methode pour le test de notification push
+     * Methode pour le test de notification push (TEST DEV)
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -91,7 +91,7 @@ class PushController extends Controller
     }
 
     /**
-     * Methode pour le test de notification push 
+     * Methode pour le test de notification push  (TEST DEV)
      * si c'est le user que j'ai créé qui est le premier dans la table sinon utiliser sendNotification
      *
      * @param Request $request

@@ -178,7 +178,10 @@ class AuthController extends Controller
             $message->subject('Réinitialisation de mot de passe');
         });
 
-        return response()->json([], 200);
+        // return response()->json([], 200);
+
+        // Unique pour la présentation
+        return response()->json(['token' => $token], 200);
     }
 
     /**

@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 class RevisionController extends Controller
 {
 
+
+    /**
+     * Ajoute le thème spécifié aux révisions de l'utilisateur connecté.
+     *
+     * @param $themeId
+     */
     public function createRevision($themeId)
     {
         try {
@@ -23,7 +29,7 @@ class RevisionController extends Controller
 
             // Vérifier si le thème est public ou appartient à l'utilisateur connecté
             if (!$theme->public && $theme->user_id !== $user->id) {
-                return response()->json(['error' => 'Accès refusé. Le thème et privé.'], 403);
+                return response()->json(['error' => 'Accès refusé. Le thème est privé.'], 403);
             }
 
             // Vérifier si le thème est déjà révisé par l'utilisateur
