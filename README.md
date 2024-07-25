@@ -43,6 +43,10 @@ Cette application permet à l'utilisateur de créer un programme de révision pe
 
 Suivez ces étapes pour configurer l'environnement de développement de l'application sur votre système local.
 
+### Prérequis 
+🐋 Docker Desktop </br>
+👨‍🎤 Composer
+
 ### Étapes d'Installation
 
 1.  **Clonage du dépôt**
@@ -52,12 +56,6 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     ```bash
     git clone https://github.com/Mart1n-S/mementos-backend.git
     cd mementos-backend
-    ```
-
-    ⚠️ Pour tester l'application avec la fonctionnalité <strong>'invité'</strong>, changez pour la branche spécifique en exécutant :
-
-    ```bash
-    git checkout userGuest
     ```
 
 2.  **Installation des dépendances**
