@@ -43,7 +43,8 @@ Cette application permet à l'utilisateur de créer un programme de révision pe
 
 Suivez ces étapes pour configurer l'environnement de développement de l'application sur votre système local.
 
-### Prérequis 
+### Prérequis
+
 🐋 Docker Desktop </br>
 👨‍🎤 Composer
 
@@ -102,7 +103,15 @@ Suivez ces étapes pour configurer l'environnement de développement de l'applic
     php artisan serve
     ```
 
-8.  **Tester les notifications et mise à jour des révisions**
+8.  **Générer les clés VAPID si nécessaire**
+
+    Modifiez les clés VAPID dans le fichier .env du backend en utilisant celles générées par la commande suivante. Pensez également à mettre à jour la clé publique dans le frontend VueJS, spécifiquement dans le fichier src/services/pushService.ts :
+
+    ```bash
+    web-push generate-vapid-keys
+    ```
+
+9.  **Tester les notifications et mise à jour des révisions**
 
     Après avoir configuré le frontend, vous être connecté, et accepté les notifications, vous pouvez tester le système de notifications en exécutant :
 
